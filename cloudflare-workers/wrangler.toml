@@ -1,0 +1,19 @@
+name = "spectrelink-entry"
+main = "src/entry-worker.js"
+compatibility_date = "2024-06-01"
+
+[vars]
+EXIT_WORKER_URL = "https://your-exit-worker.your-account.workers.dev"
+HTTP_NEXT_HOP_URL = "https://your-exit-worker.your-account.workers.dev"
+
+# Secret SHARED_KEY debe configurarse en el dashboard:
+# wrangler secret put SHARED_KEY
+
+[[workers]]
+name = "spectrelink-exit"
+main = "src/exit-worker.js"
+compatibility_date = "2024-06-01"
+compatibility_flags = ["tcp_sockets"]
+
+[vars]
+ALLOWED_DOMAINS = "example.com,api.example.com"
