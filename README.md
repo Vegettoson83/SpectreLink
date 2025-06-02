@@ -78,7 +78,7 @@ The `DEPLOYMENT.md` covers:
 - Testing the setup.
 
 ### Worker Configuration Files
--   `wrangler.toml`: Configuration file for deploying the `entry-worker.js` to Cloudflare Workers. It includes settings for the worker name, main script path, compatibility flags, environment variables (like `EXIT_WORKER_URL`), and service bindings.
+-   `wrangler.toml`: Configuration file for deploying the `entry-worker.js` to Cloudflare Workers. It includes settings for the worker name, main script path, compatibility flags, environment variables (like `EXIT_WORKER_URL`), and service bindings. For this example distribution, the `SHARED_KEY` is hardcoded within the `[env.production.vars]` section for ease of initial setup; however, for actual deployments, it is strongly recommended to remove it from the file and configure it securely using `wrangler secret put SHARED_KEY` as detailed in `DEPLOYMENT.MD`.
 -   `wrangler-exit.toml`: Configuration file for deploying the `exit-worker.js`. It specifies settings for the exit worker, including its `tcp_sockets` compatibility flag and how to configure `ALLOWED_DOMAINS` via secrets.
 
 ## Usage

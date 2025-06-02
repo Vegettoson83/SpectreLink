@@ -6,8 +6,9 @@ compatibility_flags = ["nodejs_compat"]
 [env.production.vars]
 EXIT_WORKER_URL = "https://spectrelink-exit.your-account.workers.dev" # Placeholder - user must change
 HTTP_NEXT_HOP_URL = "https://spectrelink-exit.your-account.workers.dev" # Placeholder - user must change
+SHARED_KEY = "eb0ade2f9aa422229a77950e3f6e566f2a8bfd80c1e0b7061aa9aac78c6ddf12"
 
-# The SHARED_KEY secret must be configured via:
+# SHARED_KEY is hardcoded above for this example. For production, remove it from vars and use secrets:
 # wrangler secret put SHARED_KEY --name spectrelink-entry --env production
 # Use a 64-character hex string (32 bytes)
 

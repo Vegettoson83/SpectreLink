@@ -104,13 +104,10 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
     ```
     *(You might be prompted for a name, e.g., `spectrelink-entry`)*
 
-4.  **Set the shared key**:
-    This must be the same 64-character hex key you generated in Step 1.
-    ```bash
-    # Replace 'spectrelink-entry' if you named your worker differently
-    wrangler secret put SHARED_KEY --name spectrelink-entry --env production
-    # When prompted, paste the key.
-    ```
+4.  **Verify Shared Key Configuration**:
+    The `SHARED_KEY` for the entry worker is pre-configured directly in `wrangler.toml` for this example distribution (`SHARED_KEY = "eb0ade2f9aa422229a77950e3f6e566f2a8bfd80c1e0b7061aa9aac78c6ddf12"`).
+
+    **IMPORTANT SECURITY NOTE**: While this key is hardcoded for ease of setup in this example, **it is strongly recommended for production or any sensitive deployments to remove this key from `wrangler.toml` and set it using `wrangler secret put SHARED_KEY --name spectrelink-entry --env production`**. Hardcoding secrets in configuration files is a security risk if the repository is public or accessible to unauthorized individuals. The original commented-out lines in `wrangler.toml` provide guidance on using secrets.
 
 5.  **Note the entry worker URL**. It will be something like:
     `https://spectrelink-entry.your-account-name.workers.dev`
@@ -146,12 +143,12 @@ Both should return "OK".
     ```ini
     # .env
     CF_ENTRY_URL=https://spectrelink-entry.your-account-name.workers.dev
-    SHARED_KEY=your-64-character-hex-key-here
+    SHARED_KEY=eb0ade2f9aa422229a77950e3f6e566f2a8bfd80c1e0b7061aa9aac78c6ddf12 # Must match the key in wrangler.toml or set via secret for entry worker
     PROXY_HOST=127.0.0.1
     PROXY_PORT=1080
     # NODE_TLS_REJECT_UNAUTHORIZED=0 # Uncomment if using self-signed certs for local WS endpoint (not typical for CF)
     ```
-    Replace with your actual Entry Worker URL and Shared Key.
+    Replace with your actual Entry Worker URL and ensure the Shared Key matches the one in the Entry Worker configuration.
 
 4.  **Run the local proxy server**:
     If using a `.env` file and `dotenv` (install with `npm install dotenv`):
@@ -271,6 +268,7 @@ wscat -c wss://spectrelink-entry.your-account-name.workers.dev/tunnel
 ## Security Considerations
 
 1.  **Keep the SHARED_KEY absolutely secret**. Anyone with this key can decrypt traffic or use your tunnel.
+    *   If you are using the example setup with the hardcoded key in `wrangler.toml`, be especially mindful of your repository's access controls. For production, always use `wrangler secret put` as described in the comments within `wrangler.toml` and in Step 3.
 2.  **Use `ALLOWED_DOMAINS`** on the exit worker to restrict where it can connect. Be as specific as possible.
 3.  **Monitor worker usage** in the Cloudflare dashboard for abuse or unexpected activity.
 4.  **Rotate the `SHARED_KEY` periodically**. This requires updating the secret on the entry worker and updating the environment variable for all local proxy clients.
