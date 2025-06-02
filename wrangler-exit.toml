@@ -1,0 +1,12 @@
+name = "spectrelink-exit"
+main = "src/workers/exit-worker.js" # Adjusted path
+compatibility_date = "2024-03-01" # General recent date
+compatibility_flags = ["nodejs_compat", "tcp_sockets"]
+
+[env.production.vars]
+# Comma-separated list of allowed domains (optional but recommended for security)
+# This secret must be configured via:
+# wrangler secret put ALLOWED_DOMAINS --name spectrelink-exit --env production
+# Example: ALLOWED_DOMAINS = "example.com,api.example.com,*.github.com"
+# Leave empty (by not setting the secret or setting an empty string) to allow all domains (less secure).
+ALLOWED_DOMAINS = "" # Default to empty, user sets via secret

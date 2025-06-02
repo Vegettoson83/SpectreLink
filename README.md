@@ -41,38 +41,45 @@ This project implements a secure proxy and tunneling service using Cloudflare Wo
     -   `SOCKS5_STATUS`: An object mapping SOCKS5 status codes to their hex values.
 -   **Note**: These functions rely on the Node.js `Buffer` object. For use in Cloudflare Workers, ensure Node.js compatibility mode is enabled (e.g., by adding `nodejs_compat = true` to your `wrangler.toml`) or provide a `Buffer` polyfill.
 
+## Project Structure
+
+```
+spectrelink/
+├── src/
+│   ├── lib/
+│   │   ├── _helpers.js              # Utility functions
+│   │   ├── secure-crypto.js         # Encryption/decryption logic
+│   │   └── socks5-helpers.js        # SOCKS5 protocol utilities
+│   └── workers/
+│       ├── entry-worker.js          # Entry point Cloudflare Worker
+│       └── exit-worker.js           # Exit point Cloudflare Worker
+├── local-proxy-client/
+│   └── local-proxy-server.js   # Local SOCKS5 proxy server (Node.js)
+├── DEPLOYMENT.md               # Detailed guide for deploying workers and setting up the client
+├── package.json                # Project metadata, dependencies, and scripts
+├── README.md                   # This overview file
+├── wrangler.toml               # Configuration for the Entry Worker
+└── wrangler-exit.toml          # Configuration for the Exit Worker
+```
+
 ## Setup & Deployment
 
-This project is designed for Cloudflare Workers.
+This project involves deploying two Cloudflare Workers (entry and exit) and running a local SOCKS5 proxy client.
 
-1.  **Prerequisites**:
-    -   Node.js and npm installed.
-    -   Cloudflare account and `wrangler` CLI installed and configured (`npm install -g wrangler`).
+**For detailed, step-by-step instructions, please refer to the [SpectreLink Deployment Guide](./DEPLOYMENT.md).**
 
-2.  **Environment Variables**:
-    Ensure the following environment variables are configured for your workers in the Cloudflare dashboard or via `wrangler.toml`:
+The `DEPLOYMENT.md` covers:
+- Prerequisites (Cloudflare account, Wrangler CLI, Node.js).
+- Generating a shared secret key.
+- Deploying the exit worker using `wrangler-exit.toml`.
+- Deploying the entry worker using `wrangler.toml`.
+- Configuring environment variables and secrets for both workers.
+- Setting up and running the local SOCKS5 proxy client.
+- Testing the setup.
 
-    *   **For `entry-worker.js`**:
-        *   `SHARED_KEY`: A 64-character hex string (32 bytes) used as the master key for encrypting session keys.
-        *   `EXIT_WORKER_URL`: The URL of your deployed `exit-worker.js`.
-        *   `HTTP_NEXT_HOP_URL` (optional, alternative to `EXIT_WORKER_URL` for HTTP proxy): URL for the next hop if not using the exit worker for HTTP proxy.
-
-    *   **For `exit-worker.js`**:
-        *   `ALLOWED_DOMAINS` (optional): A comma-separated list of domains that the exit worker is allowed to connect to (e.g., `example.com,api.another.com`).
-
-3.  **Deployment**:
-    Use the scripts in `package.json` or `wrangler` commands directly:
-    ```bash
-    # For the entry worker
-    npm run deploy:entry
-    # or
-    wrangler deploy src/workers/entry-worker.js --name your-entry-worker-name
-
-    # For the exit worker
-    npm run deploy:exit
-    # or
-    wrangler deploy src/workers/exit-worker.js --name your-exit-worker-name
-    ```
+### Worker Configuration Files
+-   `wrangler.toml`: Configuration file for deploying the `entry-worker.js` to Cloudflare Workers. It includes settings for the worker name, main script path, compatibility flags, environment variables (like `EXIT_WORKER_URL`), and service bindings.
+-   `wrangler-exit.toml`: Configuration file for deploying the `exit-worker.js`. It specifies settings for the exit worker, including its `tcp_sockets` compatibility flag and how to configure `ALLOWED_DOMAINS` via secrets.
 
 ## Usage
 
