@@ -78,3 +78,52 @@ This project is designed for Cloudflare Workers.
 
 -   **TCP Tunneling**: Connect to the `/tunnel` WebSocket endpoint of the entry worker. The client must perform a handshake, sending an encrypted session key.
 -   **HTTP Proxy**: Send POST requests to the `/proxy` endpoint of the entry worker with a JSON body specifying `url`, `method`, `headers`, and `data`. The `data` can be marked as `encrypted`.
+
+## Local SOCKS5 Proxy Client (`local-proxy-client/`)
+
+This project also includes a local SOCKS5 proxy server client that runs on your machine. It allows local applications to route their traffic through the secure tunnel system via a standard SOCKS5 interface.
+
+### Purpose
+-   Listens for incoming SOCKS5 connections on a local port.
+-   For each connection, it establishes a secure tunnel to the configured Entry Worker.
+-   Proxies data between the local application and the remote target through this secure tunnel.
+
+### Dependencies
+-   Node.js (version recommended by `ws` package, typically a recent LTS)
+-   `ws`: WebSocket client library. This will be installed via `npm install`.
+
+### Configuration
+The local SOCKS5 proxy client is configured using the following environment variables:
+
+-   `PROXY_HOST`: (Optional) The local IP address for the SOCKS5 proxy to listen on. Defaults to `127.0.0.1`.
+-   `PROXY_PORT`: (Optional) The local port for the SOCKS5 proxy to listen on. Defaults to `1080`.
+-   `CF_ENTRY_URL`: **(Required)** The full URL of your deployed Entry Worker (e.g., `https://your-entry-worker.your-account.workers.dev`).
+-   `SHARED_KEY`: **(Required)** The 64-character hex string (32 bytes) master key, identical to the one configured for the Entry Worker.
+
+Example:
+```bash
+export CF_ENTRY_URL="https://your-entry-worker.example.com"
+export SHARED_KEY="0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+export PROXY_PORT="1088"
+```
+
+### Setup and Running
+1.  **Install Dependencies**:
+    Navigate to the project root directory and run:
+    ```bash
+    npm install
+    ```
+    This will install the `ws` library and other development dependencies.
+
+2.  **Run the Server**:
+    Ensure the environment variables (`CF_ENTRY_URL`, `SHARED_KEY`, and optionally `PROXY_HOST`, `PROXY_PORT`) are set. Then run:
+    ```bash
+    npm run start:local-proxy
+    ```
+    Or directly:
+    ```bash
+    node local-proxy-client/local-proxy-server.js
+    ```
+
+3.  **Configure Your Application**:
+    Set your local application's SOCKS5 proxy settings to the address and port the `local-proxy-server.js` is listening on (e.g., `127.0.0.1:1080` or `127.0.0.1:1088` if you set `PROXY_PORT`). No username or password is required for the SOCKS5 proxy.

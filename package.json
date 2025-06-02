@@ -8,10 +8,14 @@
     "deploy:entry": "wrangler deploy src/workers/entry-worker.js",
     "start:exit": "wrangler dev src/workers/exit-worker.js",
     "deploy:exit": "wrangler deploy src/workers/exit-worker.js",
+    "start:local-proxy": "node local-proxy-client/local-proxy-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "AI Developer",
   "license": "UNLICENSED",
+  "dependencies": {
+    "ws": "^8.17.0"
+  },
   "devDependencies": {
     "wrangler": "^3.0.0"
   }
