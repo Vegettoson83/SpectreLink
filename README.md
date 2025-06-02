@@ -33,6 +33,14 @@ This project implements a secure proxy and tunneling service using Cloudflare Wo
 -   Includes polyfills for `btoa`/`atob` in Node.js.
 -   Provides utility functions for hex string <-> Uint8Array and ArrayBuffer <-> Base64 conversions.
 
+### 5. SOCKS5 Helpers (`src/lib/socks5-helpers.js`)
+-   Provides utility functions for working with the SOCKS5 protocol.
+-   Includes:
+    -   `parseSocks5ConnectRequest`: Parses SOCKS5 client CONNECT requests.
+    -   `createSocks5Response`: Creates SOCKS5 server responses.
+    -   `SOCKS5_STATUS`: An object mapping SOCKS5 status codes to their hex values.
+-   **Note**: These functions rely on the Node.js `Buffer` object. For use in Cloudflare Workers, ensure Node.js compatibility mode is enabled (e.g., by adding `nodejs_compat = true` to your `wrangler.toml`) or provide a `Buffer` polyfill.
+
 ## Setup & Deployment
 
 This project is designed for Cloudflare Workers.
